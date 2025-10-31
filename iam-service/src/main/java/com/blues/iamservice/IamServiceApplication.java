@@ -1,4 +1,4 @@
-package com.blues.gatewayservice;
+package com.blues.iamservice;
 
 import com.blues.common.env.utils.EgovConfigUtil;
 import org.springframework.boot.SpringApplication;
@@ -7,11 +7,11 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-public class GatewayServiceApplication {
+public class IamServiceApplication {
 
     public static void main(String[] args) {
         EgovConfigUtil.d();
-        SpringApplication.run(GatewayServiceApplication.class, args);
+        SpringApplication.run(IamServiceApplication.class, args);
     }
 
 }

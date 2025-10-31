@@ -1,11 +1,9 @@
 package com.blues.common.env;
 
-import io.github.cdimascio.dotenv.Dotenv;
+import com.blues.common.env.utils.EgovConfigUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.core.env.ConfigurableEnvironment;
-
-import java.io.File;
 
 public class DotenvEnvironmentPostProcessor implements EnvironmentPostProcessor {
 
