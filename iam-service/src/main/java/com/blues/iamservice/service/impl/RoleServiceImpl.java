@@ -1,6 +1,9 @@
 package com.blues.iamservice.service.impl;
 
 import com.blues.common.env.utils.PageUtil;
+import com.blues.iamservice.config.exception.BadRequestException;
+import com.blues.iamservice.config.exception.InternalServerErrorException;
+import com.blues.iamservice.config.exception.NotFoundException;
 import com.blues.iamservice.mapper.RoleMapper;
 import com.blues.iamservice.model.Role;
 import com.blues.iamservice.repo.RoleRepo;
@@ -8,11 +11,9 @@ import com.blues.iamservice.request.RoleCreateRequest;
 import com.blues.iamservice.request.RoleFilterRequest;
 import com.blues.iamservice.response.RoleResponse;
 import com.blues.iamservice.service.RoleService;
-import jakarta.ws.rs.BadRequestException;
-import jakarta.ws.rs.InternalServerErrorException;
-import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -36,16 +37,16 @@ public class RoleServiceImpl implements RoleService {
         // validate if role name is contained in DB
         Optional<Role> searchRole = findByName(roleName);
         if (searchRole.isPresent()) {
-            throw new BadRequestException("{message.validation.role.duplicate}");
+            throw new BadRequestException("message.validation.role.duplicate");
         }
 
         Role role = roleMapper.toEntity(roleCreateRequest);
         try {
-            Role savedRole = roleRepo.save(role);
+            Role savedRole = this.save(role);
             return roleMapper.toResponse(savedRole);
         } catch (Exception e) {
             log.error("{}: {}", RoleServiceImpl.class.getName(), e.getMessage(), e);
-            throw new InternalServerErrorException("{message.error.server.exception}");
+            throw new InternalServerErrorException("message.error.server.exception");
         }
     }
 
@@ -57,16 +58,16 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public RoleResponse getRoleById(String id) {
-        Optional<Role> foundRole = roleRepo.findById(UUID.fromString(id));
+        Optional<Role> foundRole = this.findById(UUID.fromString(id));
         return foundRole.map(roleMapper::toResponse)
-                .orElseThrow(() -> new NotFoundException("{message.filter.roles.not_found}"));
+                .orElseThrow(() -> new NotFoundException("message.filter.roles.not_found"));
     }
 
     @Override
     public Page<RoleResponse> filterRole(RoleFilterRequest request) {
         Pageable pageable = PageUtil.getPageable(request);
-        // todo
-        return null;
+        String keywords = StringUtils.isBlank(request.getKeywords()) ? "" : request.getKeywords();
+        return roleRepo.findByNameContaining(keywords, pageable).map(roleMapper::toResponse);
     }
 
     @Override

@@ -21,10 +21,12 @@ public class RoutesConfig {
 
         serviceList.forEach(service -> {
             routesBuilder.route(service, r -> r
-                    .path("/" + service + "/**") // prefix route theo service
-                    .uri("lb://" + service)      // load-balancing với lb://
+                    .path("/" + service.toLowerCase() + "/**") // prefix route theo service
+//                    .filters(f -> f.stripPrefix(1))
+                    .uri("lb://" + service.toUpperCase())      // load-balancing với lb://
             );
         });
+
         return routesBuilder.build();
     }
 }

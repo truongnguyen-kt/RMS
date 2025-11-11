@@ -19,4 +19,12 @@ public class UserRole extends Auditable implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, targetEntity = Role.class)
     @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
     private Role role;
+
+    public UserRole(User user, Role role) {
+        this.role = role;
+        this.user = user;
+    }
+
+    public UserRole() {
+    }
 }
